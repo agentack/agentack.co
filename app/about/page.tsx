@@ -18,7 +18,7 @@ import {
 export const metadata: Metadata = {
   title: "Company",
   description:
-    "Agentack is a remote-first engineering team building AI lead conversion systems and custom software for real estate businesses across the GCC.",
+    "Agentack is a small engineering team building AI lead conversion systems and custom software for real estate businesses across the GCC.",
   alternates: { canonical: "/about" },
 };
 
@@ -84,12 +84,11 @@ export default function AboutPage() {
       <section className="border-t border-[var(--border)]">
         <Container>
           <div className="grid gap-6 py-12 md:grid-cols-[0.7fr_1.3fr] md:items-start">
-            <p className="eyebrow">Where we work</p>
+            <p className="eyebrow">How we engage</p>
             <p className="max-w-[70ch] text-small text-[var(--muted)]">
-              Agentack operates remotely from Karachi and serves clients across the
-              UAE, Saudi Arabia, Qatar and the wider GCC. We do not claim a regional
-              office or a local legal entity that does not exist. Work is delivered
-              remotely, with clear communication and agreed review points.
+              Work starts with a discovery call, a written scope and agreed
+              milestones. You get clear communication, named review points and a
+              handover that leaves the system in your hands.
             </p>
           </div>
         </Container>

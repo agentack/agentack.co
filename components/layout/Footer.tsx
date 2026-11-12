@@ -50,8 +50,6 @@ export function Footer() {
               >
                 {site.email}
               </a>
-              <br />
-              <span className="text-caption">{site.location}</span>
             </p>
           </div>
 

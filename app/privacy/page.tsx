@@ -14,7 +14,7 @@ const sections = [
   {
     title: "Who we are",
     body: [
-      "Agentack is a remote-first technology studio building AI and software for real estate businesses. This policy explains how we handle personal information collected through agentack.co.",
+      "Agentack is a technology studio building AI and software for real estate businesses. This policy explains how we handle personal information collected through agentack.co.",
       `For privacy questions or requests, contact ${site.email}.`,
     ],
   },

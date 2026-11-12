@@ -11,7 +11,6 @@ export const site = {
   tagline: "AI lead conversion systems and custom software for Gulf real estate.",
   descriptor: "AI and software for real estate lead conversion.",
   email: "contact@agentack.co",
-  location: "Remote-first · serving the GCC",
   url: "https://agentack.co",
   primaryCta: { label: "Book a discovery call", href: "/contact#book" },
   secondaryCta: { label: "See what we build", href: "/solutions" },
@@ -49,7 +48,7 @@ export const hero = {
     inbound: "Is the 2-bed in Marina still available? Can I view this week?",
     outbound: "Yes — Thursday 5pm or Saturday 11am. Which suits you better?",
   },
-  note: "Remote-first, GCC-focused · Pilots from $750 · English-first, Arabic-ready",
+  note: "GCC-focused · Pilots from $750 · English-first, Arabic-ready",
 };
 
 export const leaks = {
@@ -777,7 +776,7 @@ export const about = {
   eyebrow: "Company",
   title: "A specialist engineering partner for real estate.",
   description:
-    "Agentack is a small, remote-first team building AI and software for the businesses that sell, lease and manage property across the GCC.",
+    "Agentack is a small engineering team building AI and software for the businesses that sell, lease and manage property across the GCC.",
   thesisTitle: "Real estate runs on follow-up. Most systems do not.",
   thesis:
     "Property businesses do not lose deals because they lack leads. They lose them because an enquiry waits, a lead has no owner, or the third follow-up never happens. We build the systems that close that gap — and the software around them.",
@@ -806,7 +805,7 @@ export const about = {
   facts: [
     { label: "Focus", value: "Real estate technology and AI" },
     { label: "Markets", value: "UAE first, wider GCC" },
-    { label: "Base", value: "Remote-first, operating from Karachi" },
+    { label: "Delivery", value: "Milestones, reviews and written handover" },
     { label: "Languages", value: "English-first, Arabic-ready" },
   ],
 };

@@ -201,7 +201,7 @@ Adjacent work: custom CRM, portals, websites, internal tools, SaaS, mobile (case
 3. Four principles.
 4. Specialisms.
 5. Process.
-6. Where we work — honest remote-first statement.
+6. How we engage — scope, milestones, reviews and handover.
 7. CTA.
 
 No founder names, photos or invented team page. The credibility comes from engineering depth, process and transparency.
