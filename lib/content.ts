@@ -13,7 +13,7 @@ export const site = {
   email: "contact@agentack.co",
   location: "Remote-first · serving the GCC",
   url: "https://agentack.co",
-  primaryCta: { label: "Book a discovery call", href: "/contact" },
+  primaryCta: { label: "Book a discovery call", href: "/contact#book" },
   secondaryCta: { label: "See what we build", href: "/solutions" },
 };
 

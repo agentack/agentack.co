@@ -286,6 +286,8 @@ Georgia and DM Sans are retired. All headings use `lining-nums`; numbered cards 
 - 13 routes, all static, all returning 200.
 - Shared content model in `lib/content.ts`.
 - Reusable components for heroes, problem framing, service ladder, personas, pricing, proof, specialisms, process, FAQ, integrations, pilot, CTA and contact.
+- Contact form posts to `app/api/contact` with validation, honeypot, timing trap, payload cap and per-IP rate limiting; delivery through Resend and/or HubSpot from environment variables.
+- Optional Cal.com booking section on `/contact`, shown only when `NEXT_PUBLIC_CALCOM_LINK` is set.
 - Working light/dark themes, focus rings, reduced-motion support, RTL-ready CSS.
 - Organization JSON-LD, per-page metadata and canonicals, sitemap and robots.
 - Honest positioning: no fake proof, no fake Arabic switch, no fake office, no guaranteed results.
@@ -294,8 +296,8 @@ Georgia and DM Sans are retired. All headings use `lining-nums`; numbered cards 
 
 ## 8. Launch gaps — in priority order
 
-1. **Form handler.** Connect the form to HubSpot (or a route handler + Resend) and add spam protection. Currently markup only, no submit action.
-2. **Cal.com.** Add the booking embed or booking link as the primary conversion path; keep the form as fallback.
+1. **Form delivery credentials.** The handler at `app/api/contact` is built: validation, honeypot, timing trap, payload cap, per-IP rate limit and Resend + HubSpot delivery. Add `RESEND_API_KEY` (or HubSpot form credentials) in `.env.local`, then send one real test enquiry. Returns `503` until a provider is configured — no fake success.
+2. **Cal.com link.** The booking section is built and renders when `NEXT_PUBLIC_CALCOM_LINK` is set. Create the event type, add the link, and test the embed on mobile.
 3. **Contact email.** Confirm `contact@agentack.co` is live and monitored.
 4. **Analytics.** GA4 + GTM with consent; events for CTA clicks, form start/submit, calendar open, WhatsApp click, FAQ open and scroll depth.
 5. **Demo asset.** Record a 45–90 second walkthrough of a lead-conversion flow. The “Proof, honestly” section becomes much stronger with it.

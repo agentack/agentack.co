@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Agentack
 
-## Getting Started
+AI lead conversion systems and custom software for Gulf real estate.
 
-First, run the development server:
+Next.js (App Router) + TypeScript + Tailwind CSS v4. All copy lives in
+`lib/content.ts`; all pages are composed from the components in `components/`.
+
+## Run locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build    # production build
+npm start        # serve the production build
+npm run lint     # eslint
+npx tsc --noEmit # types
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Environment
 
-## Learn More
+Copy `.env.example` to `.env.local` and fill in what you need.
 
-To learn more about Next.js, take a look at the following resources:
+| Variable | Purpose |
+|---|---|
+| `RESEND_API_KEY` | Send contact form enquiries by email (recommended). |
+| `CONTACT_TO_EMAIL` | Inbox that receives enquiries. Defaults to `contact@agentack.co`. |
+| `CONTACT_FROM_EMAIL` | Verified Resend sender. |
+| `HUBSPOT_PORTAL_ID`, `HUBSPOT_FORM_ID` | Optional: send enquiries into a HubSpot form instead of / as well as email. |
+| `NEXT_PUBLIC_CALCOM_LINK` | Cal.com path (e.g. `agentack/discovery`). When set, the contact page shows the booking calendar. |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Without a delivery provider, `POST /api/contact` returns `503` with a message
+pointing to the email address — it never fakes a successful submission.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Spam protection covers a honeypot field, a minimum completion time, a payload
+size cap and a per-IP in-memory rate limit (8 per hour). Replace the in-memory
+store with a shared one if traffic grows.
 
-## Deploy on Vercel
+## Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+app/                 routes, metadata, sitemap, robots, API
+components/layout/   header, footer, container, section
+components/sections/ page sections composed from UI primitives
+components/ui/       buttons, cards, fields, icons, logo
+lib/content.ts       source of truth for copy, pricing and FAQs
+lib/contact-options  shared form option codes and labels
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Docs
+
+- `WEBSITE-STRATEGY.md` — positioning, offer, SEO and 90-day plan
+- `WEBSITE-CONTENT-FINAL.md` — page map, copy decisions, launch gaps
+- `DISCOVERY-QUESTIONS.md` — the answered business brief
+
+## Launch notes
+
+- No invented clients, logos, testimonials, metrics or compliance claims.
+- Arabic fonts and RTL rules are in place, but Arabic is not live. Add a
+  language switch only when a native Gulf-Arabic reviewer is engaged.
+- Pricing is indicative; the API and legal pages should be reviewed before
+  launch.

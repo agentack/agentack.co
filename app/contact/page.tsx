@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/sections/PageHero";
+import { BookingSection } from "@/components/sections/BookingSection";
 import { ContactSection } from "@/components/sections/ContactSection";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { contact, faqs } from "@/lib/content";
@@ -11,6 +12,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/contact" },
 };
 
+const hasBooking = Boolean(process.env.NEXT_PUBLIC_CALCOM_LINK?.trim());
+
 export default function ContactPage() {
   return (
     <>
@@ -18,9 +21,19 @@ export default function ContactPage() {
         eyebrow={contact.eyebrow}
         title={contact.title}
         description={contact.description}
-        primaryCta={{ label: "Start the form", href: "#contact" }}
-        secondaryCta={{ label: "Read the FAQ", href: "#faq" }}
+        primaryCta={
+          hasBooking
+            ? { label: "Pick a time", href: "#book" }
+            : { label: "Start the form", href: "#contact" }
+        }
+        secondaryCta={
+          hasBooking
+            ? { label: "Send a brief instead", href: "#contact" }
+            : { label: "Read the FAQ", href: "#faq" }
+        }
       />
+
+      <BookingSection />
 
       <ContactSection {...contact} />
 
