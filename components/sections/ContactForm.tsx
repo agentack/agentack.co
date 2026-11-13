@@ -4,9 +4,19 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input, Select, Textarea } from "@/components/ui/Field";
 import { Check } from "@/components/ui/icons";
-import { budgets, interests, markets, roles } from "@/lib/contact-options";
+import type { Option } from "@/lib/contact-options";
+import type { SiteContent } from "@/lib/content";
+import type { Locale } from "@/lib/i18n";
 
 type ContactFormProps = {
+  locale: Locale;
+  form: SiteContent["form"];
+  options: {
+    roles: Option[];
+    markets: Option[];
+    interests: Option[];
+    budgets: Option[];
+  };
   /** Shown after a successful submission. */
   confirmation: string;
 };
@@ -26,7 +36,12 @@ const fieldOrder = [
   "consent",
 ];
 
-export function ContactForm({ confirmation }: ContactFormProps) {
+export function ContactForm({
+  locale,
+  form,
+  options,
+  confirmation,
+}: ContactFormProps) {
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState<FieldErrors>({});
@@ -50,8 +65,8 @@ export function ContactForm({ confirmation }: ContactFormProps) {
     event.preventDefault();
     if (status === "submitting") return;
 
-    const form = event.currentTarget;
-    const data = new FormData(form);
+    const formElement = event.currentTarget;
+    const data = new FormData(formElement);
 
     const payload = {
       name: String(data.get("name") ?? ""),
@@ -64,6 +79,7 @@ export function ContactForm({ confirmation }: ContactFormProps) {
       budget: String(data.get("budget") ?? ""),
       message: String(data.get("message") ?? ""),
       consent: data.get("consent") === "on",
+      locale,
       agentack_hp: String(data.get("agentack_hp") ?? ""),
       startedAt: startedAt.current,
     };
@@ -92,20 +108,18 @@ export function ContactForm({ confirmation }: ContactFormProps) {
 
       setStatus("error");
       setErrors(result.errors ?? {});
-      setMessage(
-        result.message ?? "Something went wrong. Please try again or email us directly.",
-      );
+      setMessage(result.message ?? form.fallbackError);
 
       if (result.errors) {
         const first = fieldOrder.find((field) => result.errors?.[field]);
         if (first) {
-          const element = form.elements.namedItem(first);
+          const element = formElement.elements.namedItem(first);
           if (element instanceof HTMLElement) element.focus();
         }
       }
     } catch {
       setStatus("error");
-      setMessage("We could not reach the server. Please try again or email us directly.");
+      setMessage(form.networkError);
     }
   }
 
@@ -115,13 +129,11 @@ export function ContactForm({ confirmation }: ContactFormProps) {
         <span className="grid size-12 place-items-center rounded-pill bg-[var(--soft)] text-[var(--gold-text)]">
           <Check />
         </span>
-        <h3 className="mt-6 text-h3 text-[var(--headline)]">Message received.</h3>
+        <h3 className="mt-6 text-h3 text-[var(--headline)]">{form.successTitle}</h3>
         <p className="mt-3 max-w-[46ch] text-small text-[var(--muted)]">{confirmation}</p>
-        <p className="mt-4 text-small text-[var(--muted)]">
-          If it is urgent, email us directly and we will pick it up from there.
-        </p>
+        <p className="mt-4 text-small text-[var(--muted)]">{form.successUrgent}</p>
         <Button type="button" variant="secondary" className="mt-8" onClick={reset}>
-          Send another enquiry
+          {form.sendAnother}
         </Button>
       </div>
     );
@@ -139,7 +151,7 @@ export function ContactForm({ confirmation }: ContactFormProps) {
         aria-hidden="true"
         className="pointer-events-none absolute left-[-9999px] top-auto h-px w-px overflow-hidden"
       >
-        <label htmlFor="agentack_hp">Leave this field empty</label>
+        <label htmlFor="agentack_hp">{form.honeypot}</label>
         <input
           id="agentack_hp"
           name="agentack_hp"
@@ -160,7 +172,7 @@ export function ContactForm({ confirmation }: ContactFormProps) {
 
       <div className="grid gap-5 sm:grid-cols-2">
         <Input
-          label="Full name"
+          label={form.name}
           name="name"
           autoComplete="name"
           required
@@ -168,7 +180,7 @@ export function ContactForm({ confirmation }: ContactFormProps) {
           disabled={busy}
         />
         <Input
-          label="Work email"
+          label={form.email}
           name="email"
           type="email"
           autoComplete="email"
@@ -177,7 +189,7 @@ export function ContactForm({ confirmation }: ContactFormProps) {
           disabled={busy}
         />
         <Input
-          label="Company name"
+          label={form.company}
           name="company"
           autoComplete="organization"
           required
@@ -185,44 +197,44 @@ export function ContactForm({ confirmation }: ContactFormProps) {
           disabled={busy}
         />
         <Input
-          label="Website"
+          label={form.website}
           name="website"
           type="url"
           autoComplete="url"
           placeholder="https://"
-          hint="Optional."
+          hint={form.websiteHint}
           disabled={busy}
         />
         <Select
-          label="Your role"
+          label={form.role}
           name="role"
-          options={roles}
-          placeholder="Select a role"
+          options={options.roles}
+          placeholder={form.rolePlaceholder}
           error={errors.role}
           disabled={busy}
         />
         <Select
-          label="Main market"
+          label={form.market}
           name="market"
-          options={markets}
-          placeholder="Select a market"
+          options={options.markets}
+          placeholder={form.marketPlaceholder}
           error={errors.market}
           disabled={busy}
         />
         <Select
-          label="What do you want to improve?"
+          label={form.interest}
           name="interest"
-          options={interests}
-          placeholder="Select an area"
+          options={options.interests}
+          placeholder={form.interestPlaceholder}
           error={errors.interest}
           disabled={busy}
         />
         <Select
-          label="Indicative budget"
+          label={form.budget}
           name="budget"
-          options={budgets}
-          placeholder="Select a range"
-          hint="Helps us suggest the right starting point."
+          options={options.budgets}
+          placeholder={form.budgetPlaceholder}
+          hint={form.budgetHint}
           error={errors.budget}
           disabled={busy}
         />
@@ -230,9 +242,9 @@ export function ContactForm({ confirmation }: ContactFormProps) {
 
       <div className="mt-5">
         <Textarea
-          label="Where does the flow break today?"
+          label={form.message}
           name="message"
-          hint="Two or three lines is plenty."
+          hint={form.messageHint}
           disabled={busy}
         />
       </div>
@@ -246,7 +258,7 @@ export function ContactForm({ confirmation }: ContactFormProps) {
           className="mt-1 size-4 rounded-[3px] border border-[var(--border)] accent-[var(--headline)]"
         />
         <span>
-          I agree to be contacted about this request.
+          {form.consent}
           {errors.consent ? (
             <span className="mt-1 block text-caption font-medium text-[var(--error)]">
               {errors.consent}
@@ -256,10 +268,10 @@ export function ContactForm({ confirmation }: ContactFormProps) {
       </label>
 
       <Button type="submit" size="lg" fullWidth className="mt-6" disabled={busy}>
-        {busy ? "Sending…" : "Request a discovery call"}
+        {busy ? form.sending : form.submit}
       </Button>
       <p className="mt-3 text-center text-caption text-[var(--muted)]" aria-live="polite">
-        We reply within one business day.
+        {form.replyNote}
       </p>
     </form>
   );

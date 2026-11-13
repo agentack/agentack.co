@@ -8,9 +8,16 @@ type PipelineSectionProps = {
   title: string;
   description: string;
   stages: Stage[];
+  labels: { tabs: string; stage: string };
 };
 
-export function PipelineSection({ eyebrow, title, description, stages }: PipelineSectionProps) {
+export function PipelineSection({
+  eyebrow,
+  title,
+  description,
+  stages,
+  labels,
+}: PipelineSectionProps) {
   return (
     <Section id="solutions" tone="band" aria-labelledby="pipeline-heading">
       <Container>
@@ -20,7 +27,7 @@ export function PipelineSection({ eyebrow, title, description, stages }: Pipelin
           title={title}
           description={description}
         />
-        <StageTabs stages={stages} className="mt-12" />
+        <StageTabs stages={stages} labels={labels} className="mt-12" />
       </Container>
     </Section>
   );

@@ -18,6 +18,8 @@ type SpecialismsSectionProps = {
   footnote?: string;
   /** Insider vocabulary that signals real industry fluency. */
   vocabulary?: string[];
+  buildLabel: string;
+  vocabularyLabel: string;
 };
 
 export function SpecialismsSection({
@@ -27,6 +29,8 @@ export function SpecialismsSection({
   items,
   footnote,
   vocabulary,
+  buildLabel,
+  vocabularyLabel,
 }: SpecialismsSectionProps) {
   return (
     <Section
@@ -67,7 +71,7 @@ export function SpecialismsSection({
                 </p>
                 <p className="mt-3 text-small text-[var(--ink)]">
                   <span className="font-semibold text-[var(--headline)]">
-                    What we build:{" "}
+                    {buildLabel}{" "}
                   </span>
                   {item.build}
                 </p>
@@ -78,7 +82,7 @@ export function SpecialismsSection({
 
         {vocabulary?.length ? (
           <div className="mt-14 flex flex-col gap-3 border-t border-[var(--border)] pt-6 md:flex-row md:items-baseline md:gap-6">
-            <p className="eyebrow shrink-0">The vocabulary we work in</p>
+            <p className="eyebrow shrink-0">{vocabularyLabel}</p>
             <p className="text-small text-[var(--muted)]">
               {vocabulary.map((word, index) => (
                 <span key={word}>

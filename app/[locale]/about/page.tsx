@@ -7,37 +7,41 @@ import { CTASection } from "@/components/sections/CTASection";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { Card } from "@/components/ui/Card";
+import { getContent } from "@/lib/content";
 import {
-  about,
-  processSteps,
-  site,
-  specialisms,
-  subNiches,
-} from "@/lib/content";
+  pageMetadata,
+  resolveLocale,
+  type LocaleParams,
+} from "@/lib/i18n";
 
-export const metadata: Metadata = {
-  title: "Company",
-  description:
-    "Agentack is a small engineering team building AI lead conversion systems and custom software for real estate businesses across the GCC.",
-  alternates: { canonical: "/about" },
-};
+export async function generateMetadata({
+  params,
+}: LocaleParams): Promise<Metadata> {
+  const locale = await resolveLocale(params);
+  return pageMetadata(locale, "/about", getContent(locale).pages.about.meta);
+}
 
-export default function AboutPage() {
+export default async function AboutPage({ params }: LocaleParams) {
+  const locale = await resolveLocale(params);
+  const content = getContent(locale);
+  const about = content.about;
+  const page = content.pages.about;
+
   return (
     <>
       <PageHero
         eyebrow={about.eyebrow}
         title={about.title}
         description={about.description}
-        primaryCta={site.primaryCta}
-        secondaryCta={{ label: "See what we build", href: "/solutions" }}
+        primaryCta={content.site.primaryCta}
+        secondaryCta={content.site.secondaryCta}
       />
 
       <Section aria-labelledby="thesis-heading">
         <Container>
           <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
             <div>
-              <p className="eyebrow">Why we exist</p>
+              <p className="eyebrow">{page.thesisEyebrow}</p>
               <h2
                 id="thesis-heading"
                 className="mt-4 max-w-[24ch] text-h2 text-[var(--headline)]"
@@ -66,38 +70,41 @@ export default function AboutPage() {
       </Section>
 
       <WhyUsSection
-        eyebrow="What we believe"
-        title="Four principles that shape the work."
-        description="They are not values on a wall. They decide what we build and what we refuse to promise."
+        eyebrow={page.beliefs.eyebrow}
+        title={page.beliefs.title}
+        description={page.beliefs.description}
         points={about.principles}
       />
 
-      <SpecialismsSection {...specialisms} items={subNiches} />
+      <SpecialismsSection
+        {...content.specialisms}
+        items={content.subNiches}
+        buildLabel={content.ui.whatWeBuild}
+        vocabularyLabel={content.ui.vocabularyLabel}
+      />
 
       <ProcessSection
-        eyebrow="How we work"
-        title="Discovery, assessment, pilot, production."
-        description="A written scope and clear success criteria before anything is built."
-        steps={processSteps}
+        eyebrow={page.process.eyebrow}
+        title={page.process.title}
+        description={page.process.description}
+        steps={content.processSteps}
       />
 
       <section className="border-t border-[var(--border)]">
         <Container>
           <div className="grid gap-6 py-12 md:grid-cols-[0.7fr_1.3fr] md:items-start">
-            <p className="eyebrow">How we engage</p>
+            <p className="eyebrow">{page.engageEyebrow}</p>
             <p className="max-w-[70ch] text-small text-[var(--muted)]">
-              Work starts with a discovery call, a written scope and agreed
-              milestones. You get clear communication, named review points and a
-              handover that leaves the system in your hands.
+              {page.engageBody}
             </p>
           </div>
         </Container>
       </section>
 
       <CTASection
-        eyebrow="Work with us"
-        headline="Let's look at where your enquiries leak."
-        cta={site.primaryCta}
+        eyebrow={page.cta.eyebrow}
+        headline={page.cta.headline}
+        cta={content.site.primaryCta}
       />
     </>
   );

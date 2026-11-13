@@ -17,6 +17,7 @@ type ExpertiseGridProps = {
   items: ExpertiseItem[];
   actionLabel?: string;
   actionHref?: string;
+  cardActionLabel?: string;
 };
 
 export function ExpertiseGrid({
@@ -26,6 +27,7 @@ export function ExpertiseGrid({
   items,
   actionLabel,
   actionHref,
+  cardActionLabel,
 }: ExpertiseGridProps) {
   return (
     <Section tone="band" aria-labelledby="expertise-heading">
@@ -51,6 +53,7 @@ export function ExpertiseGrid({
               title={item.title}
               description={item.description}
               href={item.href}
+              actionLabel={cardActionLabel}
             />
           ))}
         </div>

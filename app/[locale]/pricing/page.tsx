@@ -8,39 +8,55 @@ import { Section } from "@/components/layout/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Card } from "@/components/ui/Card";
 import { Check } from "@/components/ui/icons";
-import { pricing, pricingFaqs, site } from "@/lib/content";
+import { getContent } from "@/lib/content";
+import {
+  pageMetadata,
+  pathForLocale,
+  resolveLocale,
+  type LocaleParams,
+} from "@/lib/i18n";
 
-export const metadata: Metadata = {
-  title: "Pricing",
-  description:
-    "Indicative pricing for discovery, technical assessment, pilots, production builds and support. Written scope and fixed price before work starts.",
-  alternates: { canonical: "/pricing" },
-};
+export async function generateMetadata({
+  params,
+}: LocaleParams): Promise<Metadata> {
+  const locale = await resolveLocale(params);
+  return pageMetadata(locale, "/pricing", getContent(locale).pages.pricing.meta);
+}
 
-export default function PricingPage() {
+export default async function PricingPage({ params }: LocaleParams) {
+  const locale = await resolveLocale(params);
+  const content = getContent(locale);
+  const page = content.pages.pricing;
+  const pricing = content.pricing;
+
   return (
     <>
       <PageHero
-        eyebrow="Pricing"
-        title="Know the range before the first call."
-        description="You do not need a sales call to know whether this is affordable. Ranges are published below. Final pricing is confirmed in writing after the technical assessment."
-        primaryCta={site.primaryCta}
-        secondaryCta={{ label: "How the pilot works", href: "/pilot" }}
+        eyebrow={page.hero.eyebrow}
+        title={page.hero.title}
+        description={page.hero.description}
+        primaryCta={content.site.primaryCta}
+        secondaryCta={{
+          label: page.hero.secondaryLabel,
+          href: pathForLocale("/pilot", locale),
+        }}
       />
 
-      <PricingTable {...pricing} cta={site.primaryCta} />
+      <PricingTable {...pricing} cta={content.site.primaryCta} />
 
       <Section tone="band" aria-labelledby="pricing-factors-heading">
         <Container>
           <SectionHeading
             id="pricing-factors-heading"
-            eyebrow="What changes the price"
-            title="Scope, access and complexity."
-            description="Two projects with the same number of pages can differ by 10x once integrations and data quality are involved. The assessment exists to price that honestly."
+            eyebrow={page.factors.eyebrow}
+            title={page.factors.title}
+            description={page.factors.description}
           />
           <div className="mt-12 grid gap-5 md:grid-cols-2">
             <Card className="p-8">
-              <h3 className="text-h3 text-[var(--headline)]">Main cost drivers</h3>
+              <h3 className="text-h3 text-[var(--headline)]">
+                {page.factors.driversTitle}
+              </h3>
               <ul className="mt-5 space-y-3">
                 {pricing.factors.map((factor) => (
                   <li key={factor} className="flex gap-3 text-small text-[var(--ink)]">
@@ -51,7 +67,9 @@ export default function PricingPage() {
               </ul>
             </Card>
             <Card className="p-8">
-              <h3 className="text-h3 text-[var(--headline)]">Payment terms</h3>
+              <h3 className="text-h3 text-[var(--headline)]">
+                {page.factors.paymentsTitle}
+              </h3>
               <ul className="mt-5 space-y-3">
                 {pricing.payment.map((term) => (
                   <li key={term} className="flex gap-3 text-small text-[var(--ink)]">
@@ -61,8 +79,7 @@ export default function PricingPage() {
                 ))}
               </ul>
               <p className="mt-5 border-t border-[var(--border)] pt-4 text-caption text-[var(--muted)]">
-                Third-party API, cloud and messaging costs are billed separately
-                unless explicitly included.
+                {page.factors.thirdPartyNote}
               </p>
             </Card>
           </div>
@@ -70,16 +87,16 @@ export default function PricingPage() {
       </Section>
 
       <FAQSection
-        eyebrow="Pricing FAQ"
-        title="What the ranges include."
-        description="The commercial questions that come up before a scope is agreed."
-        items={pricingFaqs}
+        eyebrow={page.faq.eyebrow}
+        title={page.faq.title}
+        description={page.faq.description}
+        items={content.pricingFaqs}
       />
 
       <CTASection
-        eyebrow="Next step"
-        headline="Start with a free discovery call."
-        cta={site.primaryCta}
+        eyebrow={page.cta.eyebrow}
+        headline={page.cta.headline}
+        cta={content.site.primaryCta}
       />
     </>
   );

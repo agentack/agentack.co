@@ -12,9 +12,13 @@ export type Stage = {
 type StageTabsProps = {
   stages: Stage[];
   className?: string;
+  labels: {
+    tabs: string;
+    stage: string;
+  };
 };
 
-export function StageTabs({ stages, className }: StageTabsProps) {
+export function StageTabs({ stages, className, labels }: StageTabsProps) {
   const [active, setActive] = useState(0);
   const baseId = useId();
 
@@ -22,7 +26,7 @@ export function StageTabs({ stages, className }: StageTabsProps) {
     <div className={cn("grid gap-8 md:grid-cols-[280px_1fr]", className)}>
       <div
         role="tablist"
-        aria-label="Pipeline stages"
+        aria-label={labels.tabs}
         aria-orientation="vertical"
         className="flex flex-col gap-2"
       >
@@ -49,7 +53,7 @@ export function StageTabs({ stages, className }: StageTabsProps) {
                 }
               }}
               className={cn(
-                "flex items-center gap-4 rounded-control border px-5 py-4 text-left text-small font-semibold transition-colors duration-[var(--dur-fast)]",
+                "flex items-center gap-4 rounded-control border px-5 py-4 text-start text-small font-semibold transition-colors duration-[var(--dur-fast)]",
                 selected
                   ? "border-[var(--headline)] bg-[var(--soft)] text-[var(--headline)]"
                   : "border-[var(--border)] text-[var(--muted)] hover:bg-[var(--soft)] hover:text-[var(--headline)]",
@@ -81,7 +85,9 @@ export function StageTabs({ stages, className }: StageTabsProps) {
           tabIndex={0}
           className="rounded-panel border border-[var(--border)] bg-[var(--surface)] p-8"
         >
-          <p className="eyebrow">Stage {String(index + 1).padStart(2, "0")}</p>
+          <p className="eyebrow">
+            {labels.stage} {String(index + 1).padStart(2, "0")}
+          </p>
           <h3 className="mt-3 text-h2 text-[var(--headline)]">{stage.title}</h3>
           <p className="mt-4 max-w-[56ch] text-body text-[var(--muted)]">
             {stage.description}

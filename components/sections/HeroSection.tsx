@@ -11,8 +11,9 @@ type HeroProps = {
   primaryCta: { label: string; href: string };
   secondaryCta: { label: string; href: string };
   card: { title: string; meta: string; status: string };
-  conversation?: { inbound: string; outbound: string };
-  note?: string;
+  conversation: { inbound: string; outbound: string };
+  note: string;
+  cardNote: string;
 };
 
 export function HeroSection({
@@ -22,11 +23,9 @@ export function HeroSection({
   primaryCta,
   secondaryCta,
   card,
-  conversation = {
-    inbound: "Is the 2-bed in Marina still available? Can I view this week?",
-    outbound: "Yes — Thursday 5pm or Saturday 11am. Which suits you better?",
-  },
-  note = "Drafted in Arabic and English",
+  conversation,
+  note,
+  cardNote,
 }: HeroProps) {
   return (
     <Section size="lg" className="border-b border-[var(--border)]">
@@ -73,7 +72,7 @@ export function HeroSection({
 
             <div className="mt-6 flex items-center gap-2 border-t border-[var(--border)] pt-4 text-caption text-[var(--muted)]">
               <span aria-hidden className="size-1.5 rounded-pill bg-[var(--gold)]" />
-              Budget, area and timeline captured
+              {cardNote}
             </div>
           </div>
         </div>

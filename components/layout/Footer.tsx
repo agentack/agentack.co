@@ -1,56 +1,59 @@
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { Logo } from "@/components/ui/Logo";
-import { site } from "@/lib/content";
+import { pathForLocale, switchLocalePath, type Locale } from "@/lib/i18n";
 
-const columns = [
-  {
-    name: "Solutions",
-    links: [
-      { label: "AI lead conversion", href: "/solutions/lead-conversion" },
-      { label: "Real estate software", href: "/solutions/custom-software" },
-      { label: "Automation & integrations", href: "/solutions/automation-and-integrations" },
-      { label: "Pricing", href: "/pricing" },
-    ],
-  },
-  {
-    name: "Who we serve",
-    links: [
-      { label: "Brokerages & agencies", href: "/who-we-serve#brokerages" },
-      { label: "Developers", href: "/who-we-serve#developers" },
-      { label: "Property managers", href: "/who-we-serve#property-managers" },
-    ],
-  },
-  {
-    name: "Company",
-    links: [
-      { label: "About", href: "/about" },
-      { label: "Pilot programme", href: "/pilot" },
-      { label: "Contact", href: "/contact" },
-    ],
-  },
-];
+type FooterProps = {
+  locale: Locale;
+  homeHref: string;
+  tagline: string;
+  email: string;
+  columns: { name: string; links: { label: string; href: string }[] }[];
+  labels: {
+    home: string;
+    rights: string;
+    privacy: string;
+    terms: string;
+    contact: string;
+    backToTop: string;
+  };
+};
 
-export function Footer() {
+export function Footer({
+  locale,
+  homeHref,
+  tagline,
+  email,
+  columns,
+  labels,
+}: FooterProps) {
   return (
     <footer className="border-t border-[var(--border)] bg-[var(--band)]">
       <Container>
         <div className="grid gap-12 py-16 md:grid-cols-[1.4fr_repeat(3,1fr)]">
           <div>
-            <Link href="/" aria-label="Agentack home">
+            <Link href={homeHref} aria-label={labels.home}>
               <Logo />
             </Link>
             <p className="mt-4 max-w-[32ch] text-small text-[var(--muted)]">
-              {site.tagline}
+              {tagline}
             </p>
             <p className="mt-6 text-small text-[var(--muted)]">
               <a
-                href={`mailto:${site.email}`}
+                href={`mailto:${email}`}
                 className="hover:text-[var(--headline)]"
               >
-                {site.email}
+                {email}
               </a>
             </p>
+            <Link
+              href={switchLocalePath("/", locale === "en" ? "ar" : "en")}
+              hrefLang={locale === "en" ? "ar" : "en"}
+              lang={locale === "en" ? "ar" : "en"}
+              className="mt-4 inline-block text-small font-semibold text-[var(--headline)] underline-offset-4 hover:underline"
+            >
+              {locale === "en" ? "العربية" : "English"}
+            </Link>
           </div>
 
           {columns.map((column) => (
@@ -75,19 +78,28 @@ export function Footer() {
         </div>
 
         <div className="flex flex-col gap-4 border-t border-[var(--border)] py-6 text-caption text-[var(--muted)] md:flex-row md:items-center md:justify-between">
-          <p>© 2026 Agentack. All rights reserved.</p>
+          <p>{labels.rights}</p>
           <div className="flex flex-wrap items-center gap-5">
-            <Link href="/privacy" className="hover:text-[var(--headline)]">
-              Privacy
+            <Link
+              href={pathForLocale("/privacy", locale)}
+              className="hover:text-[var(--headline)]"
+            >
+              {labels.privacy}
             </Link>
-            <Link href="/terms" className="hover:text-[var(--headline)]">
-              Terms
+            <Link
+              href={pathForLocale("/terms", locale)}
+              className="hover:text-[var(--headline)]"
+            >
+              {labels.terms}
             </Link>
-            <Link href="/contact" className="hover:text-[var(--headline)]">
-              Contact
+            <Link
+              href={pathForLocale("/contact", locale)}
+              className="hover:text-[var(--headline)]"
+            >
+              {labels.contact}
             </Link>
             <a href="#main" className="hover:text-[var(--headline)]">
-              Back to top
+              {labels.backToTop}
             </a>
           </div>
         </div>

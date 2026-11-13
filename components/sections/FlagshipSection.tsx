@@ -15,6 +15,7 @@ type FlagshipSectionProps = {
   primaryCta: { label: string; href: string };
   secondaryCta: { label: string; href: string };
   disclaimer: string;
+  flowLabel: string;
 };
 
 export function FlagshipSection({
@@ -26,6 +27,7 @@ export function FlagshipSection({
   primaryCta,
   secondaryCta,
   disclaimer,
+  flowLabel,
 }: FlagshipSectionProps) {
   return (
     <Section aria-labelledby="flagship-heading">
@@ -72,7 +74,7 @@ export function FlagshipSection({
             </div>
 
             <div className="rounded-panel border border-white/15 bg-black/10 p-6">
-              <p className="eyebrow text-[var(--gold-on-green)]">The flow</p>
+              <p className="eyebrow text-[var(--gold-on-green)]">{flowLabel}</p>
               <FlowDiagram steps={flow} className="mt-4 flex-col items-stretch" />
             </div>
           </div>

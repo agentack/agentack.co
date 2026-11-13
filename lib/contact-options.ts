@@ -1,7 +1,9 @@
+import type { Locale } from "@/lib/i18n";
+
 /**
  * Shared option lists for the contact form.
- * Kept in one place so the form, the API route and the email it sends
- * always agree on the same codes and labels.
+ * Values are stable codes; labels are localized. The API validates against
+ * the codes and uses the English labels in internal notifications.
  */
 
 export type Option = { value: string; label: string };
@@ -41,6 +43,59 @@ export const budgets: Option[] = [
   { value: "10k-plus", label: "$10,000+" },
   { value: "unsure", label: "Not sure yet" },
 ];
+
+const rolesAr: Option[] = [
+  { value: "founder", label: "مؤسس / رئيس تنفيذي" },
+  { value: "managing-director", label: "مدير عام" },
+  { value: "head-of-sales", label: "مدير المبيعات" },
+  { value: "operations", label: "العمليات" },
+  { value: "marketing", label: "التسويق" },
+  { value: "it", label: "تقنية المعلومات" },
+  { value: "other", label: "أخرى" },
+];
+
+const marketsAr: Option[] = [
+  { value: "uae", label: "الإمارات العربية المتحدة" },
+  { value: "saudi", label: "السعودية" },
+  { value: "qatar", label: "قطر" },
+  { value: "kuwait", label: "الكويت" },
+  { value: "bahrain", label: "البحرين" },
+  { value: "oman", label: "عُمان" },
+  { value: "other", label: "أخرى" },
+];
+
+const interestsAr: Option[] = [
+  { value: "lead-conversion", label: "نظام تحويل الاستفسارات" },
+  { value: "custom-software", label: "برمجيات مخصصة" },
+  { value: "automation", label: "أتمتة أو تكامل" },
+  { value: "assessment", label: "تقييم تقني" },
+  { value: "unsure", label: "لم أحدد بعد" },
+];
+
+const budgetsAr: Option[] = [
+  { value: "under-1k", label: "أقل من 1,000 دولار" },
+  { value: "1k-3k", label: "1,000–3,000 دولار" },
+  { value: "3k-10k", label: "3,000–10,000 دولار" },
+  { value: "10k-plus", label: "أكثر من 10,000 دولار" },
+  { value: "unsure", label: "لم أحدد بعد" },
+];
+
+export const contactOptions: Record<
+  Locale,
+  { roles: Option[]; markets: Option[]; interests: Option[]; budgets: Option[] }
+> = {
+  en: { roles, markets, interests, budgets },
+  ar: {
+    roles: rolesAr,
+    markets: marketsAr,
+    interests: interestsAr,
+    budgets: budgetsAr,
+  },
+};
+
+export function getContactOptions(locale: Locale) {
+  return contactOptions[locale];
+}
 
 /** Turns a submitted code into its human label, falling back to the raw value. */
 export function labelFor(options: Option[], value: string): string {

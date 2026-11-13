@@ -1,4 +1,4 @@
-import { site } from "@/lib/content";
+import { formMessages, type FormMessages } from "@/lib/form-messages";
 import {
   budgets,
   interests,
@@ -7,6 +7,8 @@ import {
   markets,
   roles,
 } from "@/lib/contact-options";
+import { isLocale, pathForLocale } from "@/lib/i18n";
+import { siteConfig } from "@/lib/site-config";
 
 /**
  * Contact form endpoint.
@@ -40,6 +42,7 @@ type Contact = {
   interest: string;
   budget: string;
   message: string;
+  locale: "en" | "ar";
 };
 
 function limited(ip: string): boolean {
@@ -75,10 +78,16 @@ function stringValue(value: unknown, max: number): string {
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-function readContact(body: Record<string, unknown>): {
+function readContact(
+  body: Record<string, unknown>,
+  messages: FormMessages,
+): {
   contact: Contact;
   errors: FieldErrors;
 } {
+  const rawLocale = stringValue(body.locale, 8);
+  const locale: Contact["locale"] = isLocale(rawLocale) ? rawLocale : "en";
+
   const contact: Contact = {
     name: stringValue(body.name, 120),
     email: stringValue(body.email, 200).toLowerCase(),
@@ -89,33 +98,34 @@ function readContact(body: Record<string, unknown>): {
     interest: stringValue(body.interest, 40),
     budget: stringValue(body.budget, 40),
     message: stringValue(body.message, 4_000),
+    locale,
   };
 
   const errors: FieldErrors = {};
 
   if (contact.name.length < 2) {
-    errors.name = "Please enter your name.";
+    errors.name = messages.name;
   }
   if (!emailPattern.test(contact.email)) {
-    errors.email = "Please enter a valid work email address.";
+    errors.email = messages.email;
   }
   if (contact.company.length < 2) {
-    errors.company = "Please enter your company name.";
+    errors.company = messages.company;
   }
   if (contact.role && !isOption(roles, contact.role)) {
-    errors.role = "Please choose a role from the list.";
+    errors.role = messages.role;
   }
   if (contact.market && !isOption(markets, contact.market)) {
-    errors.market = "Please choose a market from the list.";
+    errors.market = messages.market;
   }
   if (contact.interest && !isOption(interests, contact.interest)) {
-    errors.interest = "Please choose an area from the list.";
+    errors.interest = messages.interest;
   }
   if (contact.budget && !isOption(budgets, contact.budget)) {
-    errors.budget = "Please choose a budget range from the list.";
+    errors.budget = messages.budget;
   }
   if (body.consent !== true && body.consent !== "true") {
-    errors.consent = "Please agree to be contacted about this request.";
+    errors.consent = messages.consent;
   }
 
   return { contact, errors };
@@ -131,6 +141,7 @@ function plainText(contact: Contact): string {
     `Market: ${labelFor(markets, contact.market)}`,
     `Interest: ${labelFor(interests, contact.interest)}`,
     `Budget: ${labelFor(budgets, contact.budget)}`,
+    `Language: ${contact.locale === "ar" ? "Arabic" : "English"}`,
     "",
     "Where the flow breaks:",
     contact.message || "Not provided",
@@ -143,8 +154,9 @@ async function sendWithResend(contact: Contact): Promise<boolean> {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) return false;
 
-  const to = process.env.CONTACT_TO_EMAIL ?? site.email;
-  const from = process.env.CONTACT_FROM_EMAIL ?? "Agentack website <website@agentack.co>";
+  const to = process.env.CONTACT_TO_EMAIL ?? siteConfig.email;
+  const from =
+    process.env.CONTACT_FROM_EMAIL ?? "Agentack website <website@agentack.co>";
 
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -191,7 +203,10 @@ async function sendWithHubSpot(contact: Contact): Promise<boolean> {
           { name: "budget", value: labelFor(budgets, contact.budget) },
           { name: "message", value: contact.message },
         ],
-        context: { pageUri: `${site.url}/contact`, pageName: "Contact" },
+        context: {
+          pageUri: `${siteConfig.url}${pathForLocale("/contact", contact.locale)}`,
+          pageName: "Contact",
+        },
       }),
     },
   );
@@ -204,6 +219,14 @@ async function sendWithHubSpot(contact: Contact): Promise<boolean> {
   return response.ok;
 }
 
+function localeFromBody(body: unknown): FormMessages {
+  if (!body || typeof body !== "object") return formMessages.en;
+  const raw = (body as Record<string, unknown>).locale;
+  return typeof raw === "string" && isLocale(raw)
+    ? formMessages[raw]
+    : formMessages.en;
+}
+
 export async function POST(request: Request) {
   const ip =
     request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
@@ -213,7 +236,7 @@ export async function POST(request: Request) {
   const declaredLength = Number(request.headers.get("content-length") ?? "0");
   if (declaredLength > MAX_BODY_BYTES) {
     return Response.json(
-      { ok: false, message: "That message is too large to send." },
+      { ok: false, message: formMessages.en.tooLarge },
       { status: 413 },
     );
   }
@@ -223,17 +246,19 @@ export async function POST(request: Request) {
     const raw = await request.text();
     if (raw.length > MAX_BODY_BYTES) {
       return Response.json(
-        { ok: false, message: "That message is too large to send." },
+        { ok: false, message: formMessages.en.tooLarge },
         { status: 413 },
       );
     }
     body = JSON.parse(raw) as Record<string, unknown>;
   } catch {
     return Response.json(
-      { ok: false, message: "We could not read that request. Please try again." },
+      { ok: false, message: formMessages.en.unreadable },
       { status: 400 },
     );
   }
+
+  const messages = localeFromBody(body);
 
   // Honeypot: a real person never fills this field. Accept silently.
   if (typeof body.agentack_hp === "string" && body.agentack_hp.trim() !== "") {
@@ -241,14 +266,17 @@ export async function POST(request: Request) {
   }
 
   // Minimum completion time catches naive bots without annoying humans.
-  if (typeof body.startedAt === "number" && Date.now() - body.startedAt < MIN_FILL_MS) {
+  if (
+    typeof body.startedAt === "number" &&
+    Date.now() - body.startedAt < MIN_FILL_MS
+  ) {
     return Response.json({ ok: true });
   }
 
-  const { contact, errors } = readContact(body);
+  const { contact, errors } = readContact(body, messages);
   if (Object.keys(errors).length > 0) {
     return Response.json(
-      { ok: false, message: "Please check the highlighted fields.", errors },
+      { ok: false, message: messages.checkFields, errors },
       { status: 400 },
     );
   }
@@ -257,10 +285,7 @@ export async function POST(request: Request) {
   // typo does not lock themselves out.
   if (limited(ip)) {
     return Response.json(
-      {
-        ok: false,
-        message: "Too many requests. Please try again later or email us directly.",
-      },
+      { ok: false, message: messages.tooMany },
       { status: 429 },
     );
   }
@@ -268,7 +293,9 @@ export async function POST(request: Request) {
   const providers = [sendWithResend, sendWithHubSpot];
   const configured = providers.filter((provider) => {
     if (provider === sendWithResend) return Boolean(process.env.RESEND_API_KEY);
-    return Boolean(process.env.HUBSPOT_PORTAL_ID && process.env.HUBSPOT_FORM_ID);
+    return Boolean(
+      process.env.HUBSPOT_PORTAL_ID && process.env.HUBSPOT_FORM_ID,
+    );
   });
 
   if (configured.length === 0) {
@@ -276,10 +303,7 @@ export async function POST(request: Request) {
       "Contact form has no delivery provider configured. Set RESEND_API_KEY or HUBSPOT_PORTAL_ID + HUBSPOT_FORM_ID.",
     );
     return Response.json(
-      {
-        ok: false,
-        message: `The form is not connected yet. Please email ${site.email} directly.`,
-      },
+      { ok: false, message: messages.notConfigured },
       { status: 503 },
     );
   }
@@ -295,10 +319,7 @@ export async function POST(request: Request) {
   }
 
   return Response.json(
-    {
-      ok: false,
-      message: `We could not deliver your message. Please try again or email ${site.email}.`,
-    },
+    { ok: false, message: messages.deliveryFailed },
     { status: 502 },
   );
 }

@@ -17,14 +17,25 @@ type Persona = {
 type PersonaSectionProps = {
   items: Persona[];
   cta: { label: string; href: string };
+  heading: string;
+  painsLabel: string;
+  outcomesLabel: string;
+  secondaryLink: { label: string; href: string };
 };
 
-export function PersonaSection({ items, cta }: PersonaSectionProps) {
+export function PersonaSection({
+  items,
+  cta,
+  heading,
+  painsLabel,
+  outcomesLabel,
+  secondaryLink,
+}: PersonaSectionProps) {
   return (
     <Section aria-labelledby="personas-heading">
       <Container>
         <h2 id="personas-heading" className="sr-only">
-          Who we serve
+          {heading}
         </h2>
 
         <div className="space-y-16 md:space-y-20">
@@ -52,7 +63,7 @@ export function PersonaSection({ items, cta }: PersonaSectionProps) {
 
                 <div className="grid gap-8 sm:grid-cols-2">
                   <div>
-                    <p className="eyebrow">Where it breaks</p>
+                    <p className="eyebrow">{painsLabel}</p>
                     <ul className="mt-4 space-y-3">
                       {persona.pains.map((pain) => (
                         <li
@@ -65,7 +76,7 @@ export function PersonaSection({ items, cta }: PersonaSectionProps) {
                     </ul>
                   </div>
                   <div>
-                    <p className="eyebrow">What changes</p>
+                    <p className="eyebrow">{outcomesLabel}</p>
                     <ul className="mt-4 space-y-3">
                       {persona.outcomes.map((outcome) => (
                         <li
@@ -89,10 +100,10 @@ export function PersonaSection({ items, cta }: PersonaSectionProps) {
             {cta.label}
           </Button>
           <Link
-            href="/solutions"
+            href={secondaryLink.href}
             className="text-small font-semibold text-[var(--headline)] underline-offset-4 hover:underline"
           >
-            See the solutions
+            {secondaryLink.label}
           </Link>
         </div>
       </Container>

@@ -8,26 +8,47 @@ import { Button } from "@/components/ui/Button";
 import { Logo } from "@/components/ui/Logo";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { Close, Menu } from "@/components/ui/icons";
-import { nav, site } from "@/lib/content";
+import { switchLocalePath, type Locale } from "@/lib/i18n";
 
-export function Header() {
+type HeaderProps = {
+  locale: Locale;
+  homeHref: string;
+  nav: { label: string; href: string }[];
+  cta: { label: string; href: string };
+  labels: {
+    home: string;
+    primaryNav: string;
+    mobileNav: string;
+    openMenu: string;
+    closeMenu: string;
+    switchToLight: string;
+    switchToDark: string;
+    languageSwitch: string;
+    languageOther: string;
+  };
+};
+
+export function Header({ locale, homeHref, nav, cta, labels }: HeaderProps) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const current = pathname.replace(/^\/en(?=\/|$)/, "") || "/";
+  const otherLocale: Locale = locale === "en" ? "ar" : "en";
+  const otherHref = switchLocalePath(current, otherLocale);
 
   function isActive(href: string) {
-    if (href === "/") return pathname === "/";
-    return pathname === href || pathname.startsWith(`${href}/`);
+    if (href === homeHref) return current === homeHref;
+    return current === href || current.startsWith(`${href}/`);
   }
 
   return (
     <header className="sticky top-0 z-40 border-b border-[var(--border)] bg-[var(--surface)]">
       <Container>
         <div className="flex h-[72px] items-center justify-between gap-6">
-          <Link href="/" aria-label="Agentack home" className="shrink-0">
+          <Link href={homeHref} aria-label={labels.home} className="shrink-0">
             <Logo />
           </Link>
 
-          <nav aria-label="Primary" className="hidden items-center gap-7 lg:flex">
+          <nav aria-label={labels.primaryNav} className="hidden items-center gap-7 lg:flex">
             {nav.map((item) => (
               <Link
                 key={item.href}
@@ -45,10 +66,23 @@ export function Header() {
           </nav>
 
           <div className="flex items-center gap-2">
-            <ThemeToggle />
+            <Link
+              href={otherHref}
+              hrefLang={otherLocale}
+              lang={otherLocale}
+              aria-label={labels.languageSwitch}
+              className="hidden rounded-control px-3 py-2 text-small font-semibold text-[var(--headline)] transition-colors duration-[var(--dur-fast)] hover:bg-[var(--soft)] sm:inline-flex"
+            >
+              {labels.languageOther}
+            </Link>
 
-            <Button href={site.primaryCta.href} size="sm" className="hidden md:inline-flex">
-              {site.primaryCta.label}
+            <ThemeToggle
+              lightLabel={labels.switchToLight}
+              darkLabel={labels.switchToDark}
+            />
+
+            <Button href={cta.href} size="sm" className="hidden md:inline-flex">
+              {cta.label}
             </Button>
 
             <button
@@ -56,7 +90,7 @@ export function Header() {
               onClick={() => setOpen((value) => !value)}
               aria-expanded={open}
               aria-controls="mobile-nav"
-              aria-label={open ? "Close menu" : "Open menu"}
+              aria-label={open ? labels.closeMenu : labels.openMenu}
               className="grid size-11 place-items-center rounded-control border border-[var(--border)] text-[var(--headline)] lg:hidden"
             >
               {open ? <Close /> : <Menu />}
@@ -68,7 +102,7 @@ export function Header() {
       {open ? (
         <div id="mobile-nav" className="border-t border-[var(--border)] bg-[var(--surface)] lg:hidden">
           <Container>
-            <nav aria-label="Mobile" className="flex flex-col py-4">
+            <nav aria-label={labels.mobileNav} className="flex flex-col py-4">
               {nav.map((item) => (
                 <Link
                   key={item.href}
@@ -80,13 +114,22 @@ export function Header() {
                   {item.label}
                 </Link>
               ))}
+              <Link
+                href={otherHref}
+                hrefLang={otherLocale}
+                lang={otherLocale}
+                onClick={() => setOpen(false)}
+                className="border-b border-[var(--border)] py-4 text-body font-medium text-[var(--headline)]"
+              >
+                {labels.languageOther}
+              </Link>
               <Button
-                href={site.primaryCta.href}
+                href={cta.href}
                 fullWidth
                 className="mt-4"
                 onClick={() => setOpen(false)}
               >
-                {site.primaryCta.label}
+                {cta.label}
               </Button>
             </nav>
           </Container>

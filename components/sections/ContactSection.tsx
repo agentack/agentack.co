@@ -2,8 +2,19 @@ import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ContactForm } from "@/components/sections/ContactForm";
+import type { Option } from "@/lib/contact-options";
+import type { SiteContent } from "@/lib/content";
+import type { Locale } from "@/lib/i18n";
 
 type ContactSectionProps = {
+  locale: Locale;
+  form: SiteContent["form"];
+  options: {
+    roles: Option[];
+    markets: Option[];
+    interests: Option[];
+    budgets: Option[];
+  };
   eyebrow: string;
   title: string;
   description: string;
@@ -13,6 +24,9 @@ type ContactSectionProps = {
 };
 
 export function ContactSection({
+  locale,
+  form,
+  options,
   eyebrow,
   title,
   description,
@@ -59,7 +73,12 @@ export function ContactSection({
             ) : null}
           </div>
 
-          <ContactForm confirmation={confirmation} />
+          <ContactForm
+            locale={locale}
+            form={form}
+            options={options}
+            confirmation={confirmation}
+          />
         </div>
       </Container>
     </Section>

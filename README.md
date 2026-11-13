@@ -2,8 +2,9 @@
 
 AI lead conversion systems and custom software for Gulf real estate.
 
-Next.js (App Router) + TypeScript + Tailwind CSS v4. All copy lives in
-`lib/content.ts`; all pages are composed from the components in `components/`.
+Next.js (App Router) + TypeScript + Tailwind CSS v4. Copy lives in
+`lib/content/en.ts` and `lib/content/ar.ts`; pages are composed from the
+components in `components/`.
 
 ## Run locally
 
@@ -40,15 +41,39 @@ Spam protection covers a honeypot field, a minimum completion time, a payload
 size cap and a per-IP in-memory rate limit (8 per hour). Replace the in-memory
 store with a shared one if traffic grows.
 
+## Localisation
+
+English is the default locale and keeps unprefixed URLs. Arabic lives under
+`/ar`. Both locales are built from the same components and the same typed
+content shape, so a missing Arabic key fails type-checking.
+
+| URL | Locale |
+|---|---|
+| `/`, `/solutions`, `/pricing` | English |
+| `/ar`, `/ar/solutions`, `/ar/pricing` | Arabic |
+| `/en/...` | 308 redirect to the unprefixed English URL |
+
+`proxy.ts` rewrites unprefixed paths to the internal `/en` route and passes
+`/ar` through. Pages under `app/[locale]/` use `getContent(locale)` for copy and
+`pageMetadata()` for canonical and hreflang tags. The sitemap lists both locales
+with alternate links.
+
+Arabic copy must be reviewed by a qualified native Gulf-Arabic reviewer before
+launch. Do not present the Arabic edition as reviewed until that has happened.
+
 ## Structure
 
 ```
-app/                 routes, metadata, sitemap, robots, API
+app/[locale]/        routes for both locales, metadata
+app/api/contact/     form endpoint
+app/global-not-found routing-level 404 (root layout lives under [locale])
 components/layout/   header, footer, container, section
 components/sections/ page sections composed from UI primitives
 components/ui/       buttons, cards, fields, icons, logo
-lib/content.ts       source of truth for copy, pricing and FAQs
+lib/content/         en.ts, ar.ts and the typed dictionary
+lib/i18n.ts          locale config, path/hreflang helpers, page metadata
 lib/contact-options  shared form option codes and labels
+proxy.ts             locale rewrite and redirect rules
 ```
 
 ## Docs
@@ -60,7 +85,7 @@ lib/contact-options  shared form option codes and labels
 ## Launch notes
 
 - No invented clients, logos, testimonials, metrics or compliance claims.
-- Arabic fonts and RTL rules are in place, but Arabic is not live. Add a
-  language switch only when a native Gulf-Arabic reviewer is engaged.
+- Arabic copy is complete but pending review by a qualified native Gulf-Arabic
+  reviewer. Run a full pass over `lib/content/ar.ts` before launch.
 - Pricing is indicative; the API and legal pages should be reviewed before
   launch.
