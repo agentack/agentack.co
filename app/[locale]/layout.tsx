@@ -16,6 +16,7 @@ import {
   isLocale,
   localeConfig,
   locales,
+  ogImage,
   pathForLocale,
 } from "@/lib/i18n";
 import { siteConfig } from "@/lib/site-config";
@@ -83,11 +84,13 @@ export async function generateMetadata({
       description: home.description,
       url: pathForLocale("/", locale),
       locale: config.ogLocale,
+      images: [ogImage],
     },
     twitter: {
       card: "summary_large_image",
       title: home.title,
       description: home.description,
+      images: [ogImage.url],
     },
   };
 }

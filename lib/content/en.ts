@@ -1275,7 +1275,7 @@ export const en = {
       eyebrow: "Legal",
       title: "Privacy policy",
       updated:
-        "How we collect, use and protect personal information. Last updated 12 November 2026.",
+        "How we collect, use and protect personal information. Last updated 13 November 2026.",
     },
 
     terms: {
@@ -1304,7 +1304,7 @@ export const en = {
         title: "What we collect",
         body: [
           "Information you submit through the contact form: name, work email, company, website, role, market, area of interest, indicative budget and your message.",
-          "Technical information collected by analytics tools: pages viewed, approximate location, device and browser type, referral source and interaction events.",
+          "Basic technical information recorded by our hosting provider when a page is requested, such as IP address, browser type and the pages requested. We use it to keep the site secure and to diagnose faults.",
           "If you email us directly, we receive your email address, message and any attachments you choose to send.",
         ],
       },
@@ -1312,7 +1312,7 @@ export const en = {
         title: "How we use it",
         body: [
           "To respond to your enquiry, arrange a call and prepare a scope or proposal.",
-          "To understand how the website is used and improve the content and conversion paths.",
+          "To understand which enquiries come from which channels and improve our content and services.",
           "To keep records of enquiries and engagements, and to meet legal or accounting obligations where they apply.",
           "We do not sell personal information or use it for unrelated advertising.",
         ],
@@ -1320,14 +1320,14 @@ export const en = {
       {
         title: "Legal basis",
         body: [
-          "Where consent is required, we rely on the consent you provide when submitting the form or accepting analytics cookies.",
+          "Where consent is required, we rely on the consent you provide when submitting the form or asking us to contact you.",
           "We otherwise rely on legitimate business interests: responding to a request you initiated, operating the website securely and improving our services.",
         ],
       },
       {
         title: "Sharing and processors",
         body: [
-          "We use service providers for hosting, CRM, email, scheduling and analytics. These may include Vercel, HubSpot, an email delivery provider, Cal.com and Google Analytics.",
+          "We use service providers for hosting, CRM, email and scheduling. These may include our hosting provider, HubSpot, an email delivery provider and Cal.com.",
           "Providers process information on our instructions and under their own contractual and security commitments. We share only what is needed for the service.",
           "We may disclose information if required by law or to protect our rights, users or systems.",
         ],
@@ -1342,7 +1342,7 @@ export const en = {
         title: "Retention",
         body: [
           "Enquiry records are kept for as long as needed to respond, manage a potential or active engagement and meet legal obligations.",
-          "Analytics data is retained according to the settings of the analytics provider. You can ask us to delete information we are not required to keep.",
+          "Server logs, if kept by our hosting provider, are retained for a short period for security and troubleshooting. You can ask us to delete information we are not required to keep.",
         ],
       },
       {
@@ -1353,10 +1353,11 @@ export const en = {
         ],
       },
       {
-        title: "Cookies and analytics",
+        title: "Cookies and storage",
         body: [
-          "The website uses essential storage to remember your theme preference. Analytics cookies are used only where consent has been provided through the consent mechanism.",
-          "You can clear cookies through your browser settings. Blocking analytics may not affect the core website experience.",
+          "This website does not run analytics or advertising tracking. There are no analytics cookies and no third-party trackers on any page.",
+          "The only value we store in your browser is your light or dark theme preference. It stays on your device and is not sent to us.",
+          "If we add measurement later, we will update this policy first and ask for consent where the law requires it. You can clear stored values through your browser settings at any time.",
         ],
       },
       {

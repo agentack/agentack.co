@@ -61,17 +61,30 @@ with alternate links.
 Arabic copy must be reviewed by a qualified native Gulf-Arabic reviewer before
 launch. Do not present the Arabic edition as reviewed until that has happened.
 
+## Brand assets
+
+| File | Use |
+|---|---|
+| `public/agentack-logo-mark.svg` | Gold mark, extracted from `agentack new logo.ai` (472 filled paths, single colour `#cfa94e`). Used by the header and footer lockup. |
+| `app/icon.png`, `app/apple-icon.png`, `app/favicon.ico` | Tab, iOS and legacy icons: the mark on brand green. |
+| `public/icon-192.png`, `public/icon-maskable-512.png` | PWA icons referenced by `app/manifest.ts`. |
+| `public/og.png` | 1200×630 social card, referenced from `lib/i18n.ts`. |
+
+The wordmark is set in Newsreader; the mark is the only graphical element in
+the identity. Regenerate the raster assets from the SVG if the mark changes.
+
 ## Structure
 
 ```
 app/[locale]/        routes for both locales, metadata
 app/api/contact/     form endpoint
 app/global-not-found routing-level 404 (root layout lives under [locale])
+app/manifest.ts      PWA manifest and icon list
 components/layout/   header, footer, container, section
 components/sections/ page sections composed from UI primitives
 components/ui/       buttons, cards, fields, icons, logo
 lib/content/         en.ts, ar.ts and the typed dictionary
-lib/i18n.ts          locale config, path/hreflang helpers, page metadata
+lib/i18n.ts          locale config, path/hreflang helpers, page metadata, OG image
 lib/contact-options  shared form option codes and labels
 proxy.ts             locale rewrite and redirect rules
 ```

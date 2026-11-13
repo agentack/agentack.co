@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { cn } from "@/lib/cn";
 
 type LogoProps = {
@@ -11,17 +10,20 @@ type LogoProps = {
 
 /**
  * Brand lockup: the gold mark plus the typographic wordmark.
- * The mark is a transparent PNG so it sits cleanly on light and dark surfaces.
+ * The mark is a single-colour SVG so it stays sharp at any size and sits
+ * cleanly on light and dark surfaces.
  */
 export function Logo({ className, markOnly = false, onPanel = false }: LogoProps) {
   return (
     <span className={cn("inline-flex items-center gap-3", className)}>
-      <Image
-        src="/agentack-logo-gold.png"
+      {/* eslint-disable-next-line @next/next/no-img-element -- static SVG mark, no optimisation needed */}
+      <img
+        src="/agentack-logo-mark.svg"
         alt={markOnly ? "Agentack" : ""}
-        width={321}
-        height={312}
-        priority
+        width={204}
+        height={198}
+        fetchPriority="high"
+        decoding="async"
         className="h-9 w-auto shrink-0"
       />
       {markOnly ? null : (

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { siteConfig } from "@/lib/site-config";
 
 /** Locales the site is published in. English keeps unprefixed URLs. */
 export const locales = ["en", "ar"] as const;
@@ -75,6 +76,14 @@ export function pathForLocale(path: string, locale: Locale): string {
   return `/ar${clean}${hash}`;
 }
 
+/** Shared social card. The artwork is brand-only, so the alt text works in both locales. */
+export const ogImage = {
+  url: "/og.png",
+  width: 1200,
+  height: 630,
+  alt: `${siteConfig.name} — ${siteConfig.url.replace(/^https?:\/\//, "")}`,
+} as const;
+
 /** Metadata alternates with canonical and hreflang entries for both locales. */
 export function alternatesFor(
   path: string,
@@ -116,6 +125,7 @@ export function pageMetadata(
     alternates: alternatesFor(path, locale),
     openGraph: {
       type: "website",
+      siteName: siteConfig.name,
       title: meta.title,
       description: meta.description,
       url: pathForLocale(path, locale),
@@ -123,6 +133,13 @@ export function pageMetadata(
       alternateLocale: locales
         .filter((item) => item !== locale)
         .map((item) => localeConfig[item].ogLocale),
+      images: [ogImage],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: meta.title,
+      description: meta.description,
+      images: [ogImage.url],
     },
   };
 }
